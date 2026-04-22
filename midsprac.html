@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP Game Prog — Midterm Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #00e5ff;
+    --accent2: #ff4d6d;
+    --accent3: #a855f7;
+    --accent4: #22c55e;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --warning: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .header-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-meta {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+    letter-spacing: 1px;
+  }
+  .badge-blue { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.06); }
+  .badge-red  { border-color: var(--accent2); color: var(--accent2); background: rgba(255,77,109,0.06); }
+  .badge-purple { border-color: var(--accent3); color: var(--accent3); background: rgba(168,85,247,0.06); }
+  .badge-green { border-color: var(--accent4); color: var(--accent4); background: rgba(34,197,94,0.06); }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    padding: 16px 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover, .tab-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.08);
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CONCEPT CARD */
+  .concept-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
+  }
+  .concept-card:hover { border-color: rgba(0,229,255,0.3); }
+
+  .concept-card.danger { border-left: 3px solid var(--accent2); }
+  .concept-card.info   { border-left: 3px solid var(--accent); }
+  .concept-card.purple { border-left: 3px solid var(--accent3); }
+  .concept-card.green  { border-left: 3px solid var(--accent4); }
+  .concept-card.warn   { border-left: 3px solid var(--warning); }
+
+  .concept-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .concept-subtitle {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .concept-body {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #c8c8d8;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0d0d14;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+    color: #c8c8d8;
+  }
+
+  .kw  { color: #ff79c6; }
+  .type { color: #8be9fd; }
+  .str  { color: #f1fa8c; }
+  .num  { color: #bd93f9; }
+  .cmt  { color: #6272a4; font-style: italic; }
+  .fn   { color: #50fa7b; }
+  .prop { color: #ffb86c; }
+
+  /* SCENARIO BOX */
+  .scenario {
+    background: rgba(255,77,109,0.07);
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .scenario-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+
+  .scenario p { font-size: 0.9rem; color: #e0d0d5; line-height: 1.6; }
+
+  /* WHY BOX */
+  .why-box {
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+
+  .why-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .why-box p { font-size: 0.9rem; color: #d0e8ea; line-height: 1.6; }
+
+  /* EXAM TIP */
+  .exam-tip {
+    background: rgba(168,85,247,0.08);
+    border: 1px dashed rgba(168,85,247,0.4);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    color: #d8c0f5;
+  }
+  .exam-tip::before { content: '★ EXAM TIP  '; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--accent3); display: block; margin-bottom: 6px; }
+
+  /* WARNING */
+  .warn-box {
+    background: rgba(251,191,36,0.07);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    color: #fde68a;
+  }
+  .warn-box::before { content: '⚠  COMMON MISTAKE  '; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px; display: block; margin-bottom: 6px; color: var(--warning); }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.88rem;
+  }
+  .compare-table th {
+    background: rgba(0,229,255,0.1);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    color: #c8c8d8;
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Q&A PRACTICE */
+  .qa-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .qa-question {
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    transition: background 0.2s;
+  }
+  .qa-question:hover { background: rgba(255,255,255,0.03); }
+
+  .qa-q-text {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .qa-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .qa-label.short { background: rgba(0,229,255,0.12); color: var(--accent); }
+  .qa-label.long  { background: rgba(255,77,109,0.12); color: var(--accent2); }
+  .qa-label.obj   { background: rgba(34,197,94,0.12); color: var(--accent4); }
+
+  .qa-toggle {
+    font-size: 1.2rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .qa-answer {
+    display: none;
+    padding: 0 22px 18px;
+    border-top: 1px solid var(--border);
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #c0c0d0;
+    background: rgba(0,0,0,0.2);
+  }
+  .qa-answer.open { display: block; }
+  .qa-answer .ans-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--accent4);
+    display: block;
+    padding-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  /* PROGRESS OVERVIEW */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .overview-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .overview-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .overview-icon { font-size: 2rem; margin-bottom: 10px; }
+  .overview-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .overview-marks { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+
+  /* HIGHLIGHT */
+  .hl { color: var(--accent); font-weight: 700; }
+  .hl2 { color: var(--accent2); font-weight: 700; }
+  .hl3 { color: var(--accent3); font-weight: 700; }
+  .hl4 { color: var(--accent4); font-weight: 700; }
+
+  ul.styled { padding-left: 20px; margin: 10px 0; }
+  ul.styled li { margin-bottom: 6px; font-size: 0.9rem; line-height: 1.6; color: #c8c8d8; }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+  @media (max-width: 600px) {
+    .nav-tabs { gap: 6px; }
+    .tab-btn { font-size: 10px; padding: 6px 10px; }
+    .concept-card { padding: 20px; }
+    h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-tag">// MID-TERM EXAM PREP</div>
+    <h1>OOP Game Programming</h1>
+    <div class="header-meta">
+      <span class="badge badge-blue">40 MARKS TOTAL</span>
+      <span class="badge badge-green">10 OBJECTIVE</span>
+      <span class="badge badge-blue">12 SHORT QUESTIONS</span>
+      <span class="badge badge-red">18 LONG (SCRIPTS)</span>
+      <span class="badge badge-purple">SCENARIO-BASED</span>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('overview')">📋 OVERVIEW</button>
+    <button class="tab-btn" onclick="showTab('concepts')">🧠 CONCEPTS</button>
+    <button class="tab-btn" onclick="showTab('fps')">🔫 FPS GAME</button>
+    <button class="tab-btn" onclick="showTab('scripts')">📝 SCRIPTS</button>
+    <button class="tab-btn" onclick="showTab('practice')">⚡ PRACTICE Q's</button>
+  </div>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div id="tab-overview" class="section active">
+    <div class="section-title">Paper Breakdown & Strategy</div>
+    <div class="section-desc">// know the format before you study the content</div>
+
+    <div class="overview-grid">
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">🔁</div>
+        <div class="overview-name">Update Loops</div>
+        <div class="overview-marks">High Frequency Topic</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">💥</div>
+        <div class="overview-name">Triggers & Collision</div>
+        <div class="overview-marks">Scenario Questions</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">♾️</div>
+        <div class="overview-name">Singleton</div>
+        <div class="overview-marks">Script Pattern</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">💾</div>
+        <div class="overview-name">PlayerPrefs</div>
+        <div class="overview-marks">Data Persistence</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">🏃</div>
+        <div class="overview-name">Movement Scripts</div>
+        <div class="overview-marks">Core Scripting</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">🔒</div>
+        <div class="overview-name">Access Modifiers</div>
+        <div class="overview-marks">OOP Fundamentals</div>
+      </div>
+      <div class="overview-card" onclick="showTab('concepts')">
+        <div class="overview-icon">⏱️</div>
+        <div class="overview-name">Time.deltaTime</div>
+        <div class="overview-marks">Frame-Rate Fix</div>
+      </div>
+      <div class="overview-card" onclick="showTab('fps')">
+        <div class="overview-icon">🔫</div>
+        <div class="overview-name">FPS Game Scripts</div>
+        <div class="overview-marks">Long Questions (18 marks)</div>
+      </div>
+    </div>
+
+    <div class="concept-card warn">
+      <div class="concept-title">📌 What the Exam Actually Wants</div>
+      <div class="concept-body">
+        <p>Your teacher said: <strong>"rata na marna, look into the actual working."</strong> This means:</p>
+        <ul class="styled" style="margin-top:10px;">
+          <li>Don't memorize definitions blindly — understand <em>why</em> something works the way it does</li>
+          <li>Short questions will give you a <strong>game scenario</strong> and ask which concept applies and why</li>
+          <li>Long questions = write/explain actual scripts (movement, shooting, rigidbody, instantiate/destroy)</li>
+          <li>You will NOT be asked about UI scripting or scene management</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="concept-card info">
+      <div class="concept-title">📊 Marks Strategy</div>
+      <table class="compare-table">
+        <tr>
+          <th>Section</th><th>Marks</th><th>What to Expect</th><th>Priority</th>
+        </tr>
+        <tr>
+          <td>Objective (MCQs)</td><td>10</td><td>Definitions, identify code snippets, true/false on concepts</td><td>All topics equally</td>
+        </tr>
+        <tr>
+          <td>Short Questions</td><td>12</td><td>Scenario: "You're making X, which concept do you use and why?" 3-5 lines each</td><td>Triggers, Singleton, PlayerPrefs, deltaTime</td>
+        </tr>
+        <tr>
+          <td>Long Questions</td><td>18</td><td>Write full scripts — movement, shooting, FPS mechanics</td><td>Movement + FPS scripts</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== CONCEPTS ===== -->
+  <div id="tab-concepts" class="section">
+    <div class="section-title">Core Concepts</div>
+    <div class="section-desc">// understand the WHY, not just the what</div>
+
+    <!-- UPDATE LOOPS -->
+    <div class="concept-card info">
+      <div class="concept-title">🔁 Update Loops</div>
+      <div class="concept-subtitle">WHEN DOES MY CODE RUN?</div>
+      <div class="concept-body">
+        <p>Unity has different loop methods. Understanding <em>which one to use and why</em> is the key exam point.</p>
+
+        <table class="compare-table" style="margin-top:14px;">
+          <tr><th>Method</th><th>When it runs</th><th>Use it for</th></tr>
+          <tr>
+            <td><span style="color:#50fa7b;">Start()</span></td>
+            <td>Once, before first frame</td>
+            <td>Initializing variables, getting component references</td>
+          </tr>
+          <tr>
+            <td><span style="color:#50fa7b;">Update()</span></td>
+            <td>Every frame (variable rate)</td>
+            <td>Input detection, movement, non-physics logic</td>
+          </tr>
+          <tr>
+            <td><span style="color:#50fa7b;">FixedUpdate()</span></td>
+            <td>Fixed timestep (50x/sec default)</td>
+            <td>Rigidbody physics, forces, velocity changes</td>
+          </tr>
+          <tr>
+            <td><span style="color:#50fa7b;">LateUpdate()</span></td>
+            <td>After all Update() calls</td>
+            <td>Camera follow (so it moves after player has moved)</td>
+          </tr>
+          <tr>
+            <td><span style="color:#50fa7b;">Awake()</span></td>
+            <td>Before Start(), even if disabled</td>
+            <td>Singleton setup, initializing references between scripts</td>
+          </tr>
+        </table>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 1</div>
+          <p>"Your player character stutters when moving on different computers." — This happens because you move in <strong>Update()</strong> without <strong>Time.deltaTime</strong>. The fix is either multiply movement by deltaTime, or move physics in <strong>FixedUpdate()</strong>.</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 2</div>
+          <p>"Your camera jitters when following the player." — Move camera logic to <strong>LateUpdate()</strong> so it runs after the player has already moved in Update().</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIME.DELTATIME -->
+    <div class="concept-card green">
+      <div class="concept-title">⏱️ Time.deltaTime</div>
+      <div class="concept-subtitle">FRAME-RATE INDEPENDENT MOVEMENT</div>
+      <div class="concept-body">
+        <p><strong>The Problem:</strong> Without deltaTime, your game runs faster on a 120fps machine than a 30fps machine. A player moving at "5 units/frame" moves 600 units/sec on 120fps but only 150 units/sec on 30fps.</p>
+
+        <p style="margin-top:10px;"><strong>What deltaTime is:</strong> The time in seconds since the last frame. On 60fps ≈ 0.016s. On 30fps ≈ 0.033s.</p>
+
+        <p style="margin-top:10px;"><strong>The Math:</strong> <span class="hl">speed × Time.deltaTime = units per second</span> (regardless of frame rate)</p>
+
+        <div class="code-block"><span class="cmt">// BAD — speed depends on frame rate</span>
+<span class="kw">void</span> <span class="fn">Update</span>() {
+    transform.Translate(<span class="type">Vector3</span>.<span class="prop">forward</span> * speed);
+}
+
+<span class="cmt">// GOOD — speed is always same per second</span>
+<span class="kw">void</span> <span class="fn">Update</span>() {
+    transform.Translate(<span class="type">Vector3</span>.<span class="prop">forward</span> * speed * <span class="type">Time</span>.<span class="prop">deltaTime</span>);
+}</div>
+
+        <div class="why-box">
+          <div class="why-label">// WHY IT MATTERS IN FPS GAMES</div>
+          <p>In your FPS game, if bullet speed or player movement doesn't use deltaTime, the game becomes unplayable at different frame rates. Always multiply movement values by Time.deltaTime when inside Update().</p>
+        </div>
+
+        <div class="exam-tip">In short questions: if a scenario says the game behaves differently on fast vs slow machines — the answer is Time.deltaTime. If it says physics is involved — the answer is FixedUpdate().</div>
+      </div>
+    </div>
+
+    <!-- ACCESS MODIFIERS -->
+    <div class="concept-card purple">
+      <div class="concept-title">🔒 Public, Private & [SerializeField]</div>
+      <div class="concept-subtitle">WHO CAN SEE AND CHANGE MY VARIABLES?</div>
+      <div class="concept-body">
+        <table class="compare-table">
+          <tr><th>Modifier</th><th>Visible in Inspector?</th><th>Accessible from other scripts?</th><th>When to use</th></tr>
+          <tr>
+            <td><span class="hl4">public</span></td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>When other scripts need access (e.g., health that enemies can read)</td>
+          </tr>
+          <tr>
+            <td><span class="hl2">private</span></td>
+            <td>❌ No</td>
+            <td>❌ No</td>
+            <td>Internal logic only (e.g., a cached Rigidbody reference)</td>
+          </tr>
+          <tr>
+            <td><span class="hl3">[SerializeField] private</span></td>
+            <td>✅ Yes</td>
+            <td>❌ No</td>
+            <td>Best practice! Tweak in inspector but protect from other scripts</td>
+          </tr>
+        </table>
+
+        <div class="code-block"><span class="kw">public class</span> <span class="type">PlayerController</span> : <span class="type">MonoBehaviour</span> {
+
+    <span class="kw">public</span> <span class="kw">int</span> health = <span class="num">100</span>;         <span class="cmt">// any script can read/change this</span>
+
+    <span class="kw">private</span> <span class="type">Rigidbody</span> rb;           <span class="cmt">// only this script uses it</span>
+
+    [<span class="type">SerializeField</span>]
+    <span class="kw">private float</span> speed = <span class="num">5f</span>;        <span class="cmt">// shows in inspector, but protected</span>
+}</div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO</div>
+          <p>"You want to drag a bullet prefab onto your Gun script in the Inspector, but you don't want other scripts to accidentally change it." — Use <strong>[SerializeField] private</strong>.</p>
+        </div>
+
+        <div class="warn-box">Making everything public is bad practice. Use [SerializeField] private when you need inspector access but want to protect the variable from outside modification.</div>
+      </div>
+    </div>
+
+    <!-- TRIGGERS & COLLISION -->
+    <div class="concept-card danger">
+      <div class="concept-title">💥 Triggers & Collisions</div>
+      <div class="concept-subtitle">THE MOST SCENARIO-HEAVY TOPIC</div>
+      <div class="concept-body">
+        <p>Both detect when GameObjects touch, but they work differently and are used in different situations.</p>
+
+        <table class="compare-table" style="margin-top:12px;">
+          <tr><th></th><th>Collision</th><th>Trigger</th></tr>
+          <tr><td>Objects stop each other?</td><td>✅ Yes (physical)</td><td>❌ No (pass through)</td></tr>
+          <tr><td>Requires Rigidbody?</td><td>On one object</td><td>On one object</td></tr>
+          <tr><td>Collider setting</td><td>Normal collider</td><td>"Is Trigger" ✅ checked</td></tr>
+          <tr><td>Methods used</td><td>OnCollisionEnter/Stay/Exit</td><td>OnTriggerEnter/Stay/Exit</td></tr>
+          <tr><td>Game uses</td><td>Walls, floors, physics objects</td><td>Pickups, checkpoints, damage zones</td></tr>
+        </table>
+
+        <div class="code-block"><span class="cmt">// COLLISION — physical contact, objects bounce</span>
+<span class="kw">void</span> <span class="fn">OnCollisionEnter</span>(<span class="type">Collision</span> collision) {
+    <span class="kw">if</span> (collision.gameObject.<span class="fn">CompareTag</span>(<span class="str">"Enemy"</span>)) {
+        health -= <span class="num">10</span>;
+    }
+}
+
+<span class="cmt">// TRIGGER — ghost zone, objects pass through</span>
+<span class="kw">void</span> <span class="fn">OnTriggerEnter</span>(<span class="type">Collider</span> other) {
+    <span class="kw">if</span> (other.gameObject.<span class="fn">CompareTag</span>(<span class="str">"Pickup"</span>)) {
+        ammo += <span class="num">10</span>;
+        <span class="type">Destroy</span>(other.gameObject);
+    }
+}</div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 1</div>
+          <p>"You want a door to open when the player walks near it, but the player shouldn't be blocked by an invisible wall." — Use a <strong>Trigger</strong>. The player passes through the trigger zone, OnTriggerEnter fires, door opens.</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 2</div>
+          <p>"A bullet hits an enemy and the enemy should take damage." — For the actual physical hit, use <strong>OnCollisionEnter</strong>. But in FPS games, bullets are often very fast so you might use Raycast instead (no collider needed).</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 3</div>
+          <p>"You have a coin pickup in your FPS game. The player should collect it by touching it, and the coin should disappear." — <strong>Trigger</strong>. Check Is Trigger on coin's collider. Use OnTriggerEnter on coin or player. Call Destroy(gameObject).</p>
+        </div>
+
+        <div class="exam-tip">Key rule: If the objects should physically push/stop each other → Collision. If one should pass through the other (detection only) → Trigger. Always remember: at least one object in a Trigger/Collision pair needs a Rigidbody.</div>
+      </div>
+    </div>
+
+    <!-- SINGLETON -->
+    <div class="concept-card purple">
+      <div class="concept-title">♾️ Singleton Pattern</div>
+      <div class="concept-subtitle">ONE INSTANCE TO RULE THEM ALL</div>
+      <div class="concept-body">
+        <p>A Singleton ensures only <strong>one instance</strong> of a script exists in the entire game, and any other script can access it globally.</p>
+
+        <div class="why-box">
+          <div class="why-label">// WHY USE SINGLETON?</div>
+          <p>Imagine a <strong>GameManager</strong> — it tracks score, lives, and game state. You don't want two GameManagers accidentally running at the same time (that would double-count score, etc.). Singleton guarantees exactly one exists and every script can reach it easily.</p>
+        </div>
+
+        <div class="code-block"><span class="kw">public class</span> <span class="type">GameManager</span> : <span class="type">MonoBehaviour</span> {
+
+    <span class="cmt">// Static instance — shared across entire game</span>
+    <span class="kw">public static</span> <span class="type">GameManager</span> Instance;
+
+    <span class="kw">public int</span> score = <span class="num">0</span>;
+
+    <span class="kw">void</span> <span class="fn">Awake</span>() {
+        <span class="cmt">// If no instance exists, this becomes the instance</span>
+        <span class="kw">if</span> (Instance == <span class="kw">null</span>) {
+            Instance = <span class="kw">this</span>;
+            <span class="type">DontDestroyOnLoad</span>(<span class="prop">gameObject</span>); <span class="cmt">// persist across scenes</span>
+        }
+        <span class="cmt">// If one already exists, destroy this duplicate</span>
+        <span class="kw">else</span> {
+            <span class="type">Destroy</span>(<span class="prop">gameObject</span>);
+        }
+    }
+}
+
+<span class="cmt">// Any other script accesses it like this:</span>
+<span class="type">GameManager</span>.Instance.score += <span class="num">10</span>;</div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 1</div>
+          <p>"You are building an FPS game. The score, ammo count, and player health need to be tracked and displayed, accessible from any script in the game." — Use a <strong>Singleton GameManager</strong>. One instance persists throughout the game, any script can call GameManager.Instance.score etc.</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 2</div>
+          <p>"When the player picks up ammo, the ammo counter script needs to update, and the gun script also needs to know about the change." — A Singleton bridges both. Both scripts call GameManager.Instance.ammo.</p>
+        </div>
+
+        <div class="warn-box">Awake() is used (not Start()) for Singleton setup because Awake runs before any Start(). This ensures the instance exists before other scripts try to access it in their Start().</div>
+
+        <div class="exam-tip">The 3 key things about Singleton: (1) static Instance variable, (2) check in Awake() if instance already exists, (3) DontDestroyOnLoad if you want it to survive scene changes.</div>
+      </div>
+    </div>
+
+    <!-- PLAYERPREFS -->
+    <div class="concept-card warn">
+      <div class="concept-title">💾 PlayerPrefs</div>
+      <div class="concept-subtitle">SAVING DATA BETWEEN GAME SESSIONS</div>
+      <div class="concept-body">
+        <p>PlayerPrefs saves data to the device (like a tiny key-value database). It survives closing and reopening the game.</p>
+
+        <table class="compare-table">
+          <tr><th>Data Type</th><th>Save</th><th>Load</th><th>Default if not found</th></tr>
+          <tr><td>int</td><td>PlayerPrefs.SetInt("key", value)</td><td>PlayerPrefs.GetInt("key")</td><td>0</td></tr>
+          <tr><td>float</td><td>PlayerPrefs.SetFloat("key", value)</td><td>PlayerPrefs.GetFloat("key")</td><td>0f</td></tr>
+          <tr><td>string</td><td>PlayerPrefs.SetString("key", value)</td><td>PlayerPrefs.GetString("key")</td><td>""</td></tr>
+        </table>
+
+        <div class="code-block"><span class="cmt">// SAVING high score</span>
+<span class="kw">void</span> <span class="fn">SaveHighScore</span>() {
+    <span class="type">PlayerPrefs</span>.<span class="fn">SetInt</span>(<span class="str">"HighScore"</span>, score);
+    <span class="type">PlayerPrefs</span>.<span class="fn">Save</span>(); <span class="cmt">// optional, auto-saves on quit anyway</span>
+}
+
+<span class="cmt">// LOADING high score when game starts</span>
+<span class="kw">void</span> <span class="fn">Start</span>() {
+    <span class="kw">int</span> savedScore = <span class="type">PlayerPrefs</span>.<span class="fn">GetInt</span>(<span class="str">"HighScore"</span>, <span class="num">0</span>); <span class="cmt">// 0 = default</span>
+}
+
+<span class="cmt">// DELETE saved data</span>
+<span class="type">PlayerPrefs</span>.<span class="fn">DeleteKey</span>(<span class="str">"HighScore"</span>);
+<span class="type">PlayerPrefs</span>.<span class="fn">DeleteAll</span>(); <span class="cmt">// wipe everything</span></div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 1</div>
+          <p>"In your FPS game, the player's best score should still be shown when they reopen the game." — Use <strong>PlayerPrefs.SetInt("HighScore", score)</strong> to save, and <strong>PlayerPrefs.GetInt("HighScore", 0)</strong> to load. This persists across sessions.</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 2</div>
+          <p>"The player customized their sensitivity setting. It should be remembered next time." — PlayerPrefs.SetFloat("Sensitivity", value) on change, GetFloat on Start().</p>
+        </div>
+
+        <div class="warn-box">PlayerPrefs is NOT for large amounts of data or secure data (like passwords). It's only for small, simple settings and scores. For complex save systems, you'd use JSON/files, but that's beyond this exam.</div>
+
+        <div class="exam-tip">PlayerPrefs key difference from Singleton: Singleton lives during ONE game session in memory. PlayerPrefs lives on the DEVICE PERMANENTLY until deleted. Singleton dies when you close the game. PlayerPrefs doesn't.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== FPS GAME ===== -->
+  <div id="tab-fps" class="section">
+    <div class="section-title">FPS Game Deep Dive</div>
+    <div class="section-desc">// the long questions (18 marks) will be from here</div>
+
+    <!-- RIGIDBODY MOVEMENT -->
+    <div class="concept-card info">
+      <div class="concept-title">🏃 Rigidbody Movement (FPS)</div>
+      <div class="concept-subtitle">HOW THE PLAYER ACTUALLY MOVES</div>
+      <div class="concept-body">
+        <p>In an FPS game, the player uses a <strong>Rigidbody</strong> for physics-based movement. You read input, then apply velocity or force to the Rigidbody.</p>
+
+        <div class="why-box">
+          <div class="why-label">// WHY RIGIDBODY AND NOT TRANSFORM.TRANSLATE?</div>
+          <p>Transform.Translate teleports the object — it ignores walls and physics. Rigidbody movement respects colliders, gravity, and friction. In an FPS game the player must be blocked by walls and affected by gravity, so Rigidbody is required.</p>
+        </div>
+
+        <div class="code-block"><span class="kw">public class</span> <span class="type">PlayerMovement</span> : <span class="type">MonoBehaviour</span> {
+
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> speed = <span class="num">5f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> jumpForce = <span class="num">5f</span>;
+
+    <span class="kw">private</span> <span class="type">Rigidbody</span> rb;
+
+    <span class="kw">void</span> <span class="fn">Start</span>() {
+        rb = <span class="fn">GetComponent</span>&lt;<span class="type">Rigidbody</span>&gt;();  <span class="cmt">// get reference once</span>
+    }
+
+    <span class="cmt">// FixedUpdate for all Rigidbody movement</span>
+    <span class="kw">void</span> <span class="fn">FixedUpdate</span>() {
+        <span class="kw">float</span> h = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Horizontal"</span>); <span class="cmt">// A/D keys</span>
+        <span class="kw">float</span> v = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Vertical"</span>);   <span class="cmt">// W/S keys</span>
+
+        <span class="type">Vector3</span> move = <span class="kw">new</span> <span class="type">Vector3</span>(h, <span class="num">0f</span>, v) * speed;
+        rb.velocity = <span class="kw">new</span> <span class="type">Vector3</span>(move.x, rb.velocity.y, move.z);
+    }
+
+    <span class="kw">void</span> <span class="fn">Update</span>() {
+        <span class="cmt">// Input detection in Update (not FixedUpdate)</span>
+        <span class="kw">if</span> (<span class="type">Input</span>.<span class="fn">GetKeyDown</span>(<span class="type">KeyCode</span>.<span class="prop">Space</span>)) {
+            rb.<span class="fn">AddForce</span>(<span class="type">Vector3</span>.<span class="prop">up</span> * jumpForce, <span class="type">ForceMode</span>.<span class="prop">Impulse</span>);
+        }
+    }
+}</div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO</div>
+          <p>"Why is the player movement code inside FixedUpdate() instead of Update() in your FPS game?" — Because we're modifying rb.velocity (Rigidbody). Physics calculations must be in FixedUpdate() which runs at a fixed 50Hz timestep, synchronized with the physics engine. Putting physics in Update() can cause inconsistent, jittery results.</p>
+        </div>
+
+        <div class="exam-tip">Important distinction: Input.GetKeyDown() should be in Update() (so you don't miss short button presses). Physics (rb.velocity, rb.AddForce) should be in FixedUpdate(). You can use a flag/bool to communicate between them.</div>
+      </div>
+    </div>
+
+    <!-- SHOOTING / INSTANTIATE & DESTROY -->
+    <div class="concept-card danger">
+      <div class="concept-title">🔫 Shooting — Instantiate & Destroy</div>
+      <div class="concept-subtitle">SPAWNING AND REMOVING GAME OBJECTS</div>
+      <div class="concept-body">
+        <p><strong>Instantiate</strong> creates a copy of a prefab at runtime. <strong>Destroy</strong> removes a GameObject from the scene.</p>
+
+        <div class="why-box">
+          <div class="why-label">// WHY PREFABS?</div>
+          <p>A prefab is a saved template of a GameObject (like a bullet). You design one bullet in the editor, save it as a prefab, then Instantiate spawns as many copies as needed while the game runs.</p>
+        </div>
+
+        <div class="code-block"><span class="kw">public class</span> <span class="type">Gun</span> : <span class="type">MonoBehaviour</span> {
+
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">GameObject</span> bulletPrefab;   <span class="cmt">// drag prefab here</span>
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">Transform</span> firePoint;       <span class="cmt">// where bullet spawns</span>
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> bulletSpeed = <span class="num">20f</span>;
+
+    <span class="kw">void</span> <span class="fn">Update</span>() {
+        <span class="kw">if</span> (<span class="type">Input</span>.<span class="fn">GetButtonDown</span>(<span class="str">"Fire1"</span>)) { <span class="cmt">// left mouse click</span>
+            <span class="fn">Shoot</span>();
+        }
+    }
+
+    <span class="kw">void</span> <span class="fn">Shoot</span>() {
+        <span class="cmt">// Create bullet at firePoint position and rotation</span>
+        <span class="type">GameObject</span> bullet = <span class="type">Instantiate</span>(
+            bulletPrefab,
+            firePoint.position,
+            firePoint.rotation
+        );
+
+        <span class="cmt">// Push bullet forward</span>
+        <span class="type">Rigidbody</span> rb = bullet.<span class="fn">GetComponent</span>&lt;<span class="type">Rigidbody</span>&gt;();
+        rb.velocity = firePoint.<span class="prop">forward</span> * bulletSpeed;
+
+        <span class="cmt">// Auto-destroy after 3 seconds (clean up)</span>
+        <span class="type">Destroy</span>(bullet, <span class="num">3f</span>);
+    }
+}</div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 1</div>
+          <p>"Why do we Destroy bullets after a few seconds even if they haven't hit anything?" — Because every active GameObject takes memory and processing. Bullets flying forever off-map cause a memory leak and performance drop. Destroy(bullet, 3f) auto-cleans after 3 seconds.</p>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-label">// EXAM SCENARIO 2</div>
+          <p>"You need the bullet to disappear when it hits an enemy." — Add a Bullet script with OnCollisionEnter. When tag is "Enemy", deal damage and call Destroy(gameObject).</p>
+        </div>
+
+        <div class="code-block"><span class="cmt">// On the Bullet script</span>
+<span class="kw">void</span> <span class="fn">OnCollisionEnter</span>(<span class="type">Collision</span> col) {
+    <span class="kw">if</span> (col.gameObject.<span class="fn">CompareTag</span>(<span class="str">"Enemy"</span>)) {
+        col.gameObject.<span class="fn">GetComponent</span>&lt;<span class="type">EnemyHealth</span>&gt;().<span class="fn">TakeDamage</span>(<span class="num">25</span>);
+    }
+    <span class="type">Destroy</span>(<span class="prop">gameObject</span>); <span class="cmt">// destroy bullet regardless of what was hit</span>
+}</div>
+      </div>
+    </div>
+
+    <!-- MOUSE LOOK -->
+    <div class="concept-card green">
+      <div class="concept-title">👁️ Mouse Look / Camera Rotation</div>
+      <div class="concept-subtitle">LOOKING AROUND IN FPS</div>
+      <div class="concept-body">
+        <div class="code-block"><span class="kw">public class</span> <span class="type">MouseLook</span> : <span class="type">MonoBehaviour</span> {
+
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> mouseSensitivity = <span class="num">100f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">Transform</span> playerBody; <span class="cmt">// player root</span>
+
+    <span class="kw">private float</span> xRotation = <span class="num">0f</span>;
+
+    <span class="kw">void</span> <span class="fn">Start</span>() {
+        <span class="cmt">// Lock and hide cursor</span>
+        <span class="type">Cursor</span>.lockState = <span class="type">CursorLockMode</span>.<span class="prop">Locked</span>;
+    }
+
+    <span class="kw">void</span> <span class="fn">Update</span>() {
+        <span class="kw">float</span> mouseX = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Mouse X"</span>) * mouseSensitivity * <span class="type">Time</span>.<span class="prop">deltaTime</span>;
+        <span class="kw">float</span> mouseY = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Mouse Y"</span>) * mouseSensitivity * <span class="type">Time</span>.<span class="prop">deltaTime</span>;
+
+        xRotation -= mouseY;
+        xRotation = <span class="type">Mathf</span>.<span class="fn">Clamp</span>(xRotation, <span class="num">-90f</span>, <span class="num">90f</span>); <span class="cmt">// limit up/down</span>
+
+        transform.<span class="fn">localRotation</span> = <span class="type">Quaternion</span>.<span class="fn">Euler</span>(xRotation, <span class="num">0f</span>, <span class="num">0f</span>);
+        playerBody.<span class="fn">Rotate</span>(<span class="type">Vector3</span>.<span class="prop">up</span> * mouseX); <span class="cmt">// left/right turns body</span>
+    }
+}</div>
+
+        <div class="why-box">
+          <div class="why-label">// WHY TWO SEPARATE ROTATIONS?</div>
+          <p>In an FPS, <strong>left/right</strong> (Y axis) rotates the entire player body — so movement also changes direction. <strong>Up/down</strong> (X axis) only rotates the camera, not the body — so you look up without the player tilting. These are separate transforms: camera script is on the Camera, body rotation is on the Player GameObject.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== SCRIPTS REFERENCE ===== -->
+  <div id="tab-scripts" class="section">
+    <div class="section-title">Complete Script Reference</div>
+    <div class="section-desc">// full scripts to understand & explain in long questions</div>
+
+    <div class="concept-card info">
+      <div class="concept-title">📄 Complete Movement Script</div>
+      <div class="concept-body">
+        <div class="code-block"><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="type">PlayerMovement</span> : <span class="type">MonoBehaviour</span> {
+
+    <span class="cmt">// SerializeField = editable in Inspector, protected from other scripts</span>
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> moveSpeed = <span class="num">5f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> jumpForce = <span class="num">5f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">Transform</span> groundCheck;
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">LayerMask</span> groundLayer;
+
+    <span class="kw">private</span> <span class="type">Rigidbody</span> rb;
+    <span class="kw">private bool</span> isGrounded;
+    <span class="kw">private bool</span> jumpRequest = <span class="kw">false</span>;
+
+    <span class="kw">void</span> <span class="fn">Start</span>() {
+        <span class="cmt">// Get reference to Rigidbody component on same object</span>
+        rb = <span class="fn">GetComponent</span>&lt;<span class="type">Rigidbody</span>&gt;();
+    }
+
+    <span class="kw">void</span> <span class="fn">Update</span>() {
+        <span class="cmt">// Input detection MUST be in Update to catch every key press</span>
+        <span class="kw">if</span> (<span class="type">Input</span>.<span class="fn">GetKeyDown</span>(<span class="type">KeyCode</span>.<span class="prop">Space</span>) && isGrounded) {
+            jumpRequest = <span class="kw">true</span>; <span class="cmt">// flag for FixedUpdate</span>
+        }
+
+        <span class="cmt">// Ground check — sphere cast downward</span>
+        isGrounded = <span class="type">Physics</span>.<span class="fn">CheckSphere</span>(
+            groundCheck.position, <span class="num">0.2f</span>, groundLayer
+        );
+    }
+
+    <span class="kw">void</span> <span class="fn">FixedUpdate</span>() {
+        <span class="cmt">// Physics/Rigidbody in FixedUpdate for consistency</span>
+        <span class="kw">float</span> h = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Horizontal"</span>);
+        <span class="kw">float</span> v = <span class="type">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Vertical"</span>);
+
+        <span class="type">Vector3</span> direction = transform.right * h + transform.<span class="prop">forward</span> * v;
+        rb.velocity = <span class="kw">new</span> <span class="type">Vector3</span>(
+            direction.x * moveSpeed,
+            rb.velocity.y,   <span class="cmt">// preserve Y (gravity)</span>
+            direction.z * moveSpeed
+        );
+
+        <span class="kw">if</span> (jumpRequest) {
+            rb.<span class="fn">AddForce</span>(<span class="type">Vector3</span>.<span class="prop">up</span> * jumpForce, <span class="type">ForceMode</span>.<span class="prop">Impulse</span>);
+            jumpRequest = <span class="kw">false</span>;
+        }
+    }
+}</div>
+      </div>
+    </div>
+
+    <div class="concept-card danger">
+      <div class="concept-title">📄 Complete Gun / Shooting Script</div>
+      <div class="concept-body">
+        <div class="code-block"><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="type">Gun</span> : <span class="type">MonoBehaviour</span> {
+
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">GameObject</span> bulletPrefab;
+    [<span class="type">SerializeField</span>] <span class="kw">private</span> <span class="type">Transform</span> firePoint;
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> bulletSpeed = <span class="num">30f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private float</span> bulletLifetime = <span class="num">3f</span>;
+    [<span class="type">SerializeField</span>] <span class="kw">private int</span> maxAmmo = <span class="num">30</span>;
+
+    <span class="kw">private int</span> currentAmmo;
+
+    <span class="kw">void</span> <span class="fn">Start</span>() {
+        currentAmmo = maxAmmo;
+    }
+
+    <span class="kw">void</span> <span class="fn">Update</span>() {
+        <span class="kw">if</span> (<span class="type">Input</span>.<span class="fn">GetButtonDown</span>(<span class="str">"Fire1"</span>) && currentAmmo > <span class="num">0</span>) {
+            <span class="fn">Shoot</span>();
+        }
+    }
+
+    <span class="kw">void</span> <span class="fn">Shoot</span>() {
+        <span class="cmt">// Instantiate: creates a copy of prefab in the scene</span>
+        <span class="type">GameObject</span> bullet = <span class="type">Instantiate</span>(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        <span class="cmt">// Apply velocity to push bullet forward</span>
+        <span class="type">Rigidbody</span> rb = bullet.<span class="fn">GetComponent</span>&lt;<span class="type">Rigidbody</span>&gt;();
+        <span class="kw">if</span> (rb != <span class="kw">null</span>)
+            rb.velocity = firePoint.<span class="prop">forward</span> * bulletSpeed;
+
+        <span class="cmt">// Schedule destruction — prevents memory leaks</span>
+        <span class="type">Destroy</span>(bullet, bulletLifetime);
+
+        currentAmmo--;
+    }
+}</div>
+      </div>
+    </div>
+
+    <div class="concept-card purple">
+      <div class="concept-title">📄 Singleton GameManager</div>
+      <div class="concept-body">
+        <div class="code-block"><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="type">GameManager</span> : <span class="type">MonoBehaviour</span> {
+
+    <span class="cmt">// Static = belongs to class, not any instance</span>
+    <span class="kw">public static</span> <span class="type">GameManager</span> Instance;
+
+    <span class="kw">public int</span> score = <span class="num">0</span>;
+    <span class="kw">public int</span> ammo = <span class="num">30</span>;
+    <span class="kw">public int</span> health = <span class="num">100</span>;
+
+    <span class="kw">void</span> <span class="fn">Awake</span>() {
+        <span class="cmt">// Awake runs before Start — critical for singleton</span>
+        <span class="kw">if</span> (Instance == <span class="kw">null</span>) {
+            Instance = <span class="kw">this</span>;
+            <span class="type">DontDestroyOnLoad</span>(<span class="prop">gameObject</span>); <span class="cmt">// survive scene loads</span>
+        } <span class="kw">else</span> {
+            <span class="type">Destroy</span>(<span class="prop">gameObject</span>); <span class="cmt">// kill duplicate</span>
+        }
+    }
+
+    <span class="kw">public void</span> <span class="fn">AddScore</span>(<span class="kw">int</span> points) {
+        score += points;
+        <span class="type">PlayerPrefs</span>.<span class="fn">SetInt</span>(<span class="str">"HighScore"</span>,
+            <span class="type">Mathf</span>.<span class="fn">Max</span>(score, <span class="type">PlayerPrefs</span>.<span class="fn">GetInt</span>(<span class="str">"HighScore"</span>, <span class="num">0</span>)));
+    }
+}</code>
+
+<span class="cmt">// How any other script uses it:</span>
+<span class="type">GameManager</span>.Instance.<span class="fn">AddScore</span>(<span class="num">10</span>);
+<span class="type">GameManager</span>.Instance.health -= <span class="num">20</span>;</div>
+      </div>
+    </div>
+
+    <div class="concept-card green">
+      <div class="concept-title">📄 Bullet Script (with Collision + Destroy)</div>
+      <div class="concept-body">
+        <div class="code-block"><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="type">Bullet</span> : <span class="type">MonoBehaviour</span> {
+
+    [<span class="type">SerializeField</span>] <span class="kw">private int</span> damage = <span class="num">25</span>;
+
+    <span class="cmt">// Called when this bullet physically hits something</span>
+    <span class="kw">void</span> <span class="fn">OnCollisionEnter</span>(<span class="type">Collision</span> collision) {
+        <span class="cmt">// Check what we hit using tags</span>
+        <span class="kw">if</span> (collision.gameObject.<span class="fn">CompareTag</span>(<span class="str">"Enemy"</span>)) {
+            <span class="type">EnemyHealth</span> enemy = collision.gameObject.<span class="fn">GetComponent</span>&lt;<span class="type">EnemyHealth</span>&gt;();
+            <span class="kw">if</span> (enemy != <span class="kw">null</span>)
+                enemy.<span class="fn">TakeDamage</span>(damage);
+        }
+
+        <span class="cmt">// Destroy bullet on ANY collision (wall, floor, enemy)</span>
+        <span class="type">Destroy</span>(<span class="prop">gameObject</span>);
+    }
+}
+
+<span class="cmt">// Separate EnemyHealth script</span>
+<span class="kw">public class</span> <span class="type">EnemyHealth</span> : <span class="type">MonoBehaviour</span> {
+    <span class="kw">public int</span> health = <span class="num">100</span>;
+
+    <span class="kw">public void</span> <span class="fn">TakeDamage</span>(<span class="kw">int</span> amount) {
+        health -= amount;
+        <span class="kw">if</span> (health <= <span class="num">0</span>) <span class="fn">Die</span>();
+    }
+
+    <span class="kw">void</span> <span class="fn">Die</span>() {
+        <span class="type">GameManager</span>.Instance.<span class="fn">AddScore</span>(<span class="num">100</span>); <span class="cmt">// Singleton access!</span>
+        <span class="type">Destroy</span>(<span class="prop">gameObject</span>);
+    }
+}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== PRACTICE Q's ===== -->
+  <div id="tab-practice" class="section">
+    <div class="section-title">Practice Questions</div>
+    <div class="section-desc">// tap to reveal answers — simulate exam conditions first</div>
+
+    <!-- OBJECTIVE -->
+    <div style="margin-bottom:12px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent4); letter-spacing:2px;">── OBJECTIVE TYPE ──</div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">Which Unity method runs at a fixed timestep and is best for Rigidbody physics?</span>
+        <span class="qa-label obj">OBJECTIVE</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        <strong>FixedUpdate()</strong> — it runs at a consistent 50 times per second (by default), synchronized with Unity's physics engine. This ensures physics calculations don't vary with frame rate.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">What does [SerializeField] do that the "public" keyword does NOT?</span>
+        <span class="qa-label obj">OBJECTIVE</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        [SerializeField] shows a <strong>private</strong> variable in the Inspector but keeps it <strong>inaccessible from other scripts</strong>. Public also shows in Inspector but lets any script read and change it — less safe/encapsulated.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">What is the key difference between OnTriggerEnter and OnCollisionEnter?</span>
+        <span class="qa-label obj">OBJECTIVE</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        OnCollisionEnter — objects physically block each other. OnTriggerEnter — one object has "Is Trigger" checked, so they pass through each other; only detection happens, no physical response.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">PlayerPrefs.GetInt("Score") returns what if the key has never been saved?</span>
+        <span class="qa-label obj">OBJECTIVE</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        Returns <strong>0</strong> (the default value). You can also specify a custom default: PlayerPrefs.GetInt("Score", 50) would return 50 if the key doesn't exist.
+      </div>
+    </div>
+
+    <!-- SHORT -->
+    <div style="margin: 28px 0 12px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:2px;">── SHORT QUESTIONS (SCENARIO-BASED) ──</div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: You are making an FPS game. The player moves faster on a high-end PC with 120fps than on a laptop with 30fps. How do you fix this?</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        This is a <strong>frame-rate dependency</strong> issue. The fix is to multiply all movement values by <strong>Time.deltaTime</strong>.<br><br>
+        Time.deltaTime is the time in seconds since the last frame. By multiplying speed × Time.deltaTime, you convert "units per frame" to "units per second," which is the same on all machines regardless of frame rate.<br><br>
+        <code style="font-family:'Space Mono',monospace; font-size:0.8rem; color:#8be9fd;">rb.velocity = direction * speed;</code> → BAD<br>
+        <code style="font-family:'Space Mono',monospace; font-size:0.8rem; color:#50fa7b;">transform.Translate(direction * speed * Time.deltaTime);</code> → GOOD<br><br>
+        Note: If using Rigidbody in FixedUpdate(), the physics timestep is already fixed, so deltaTime is less critical there — but it's still good practice.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: You want a coin in your FPS level to disappear and increase the score when the player walks over it. The player should NOT be blocked by the coin. What do you use and why?</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        Use a <strong>Trigger</strong> (not Collision) because the player should pass through the coin without being physically blocked.<br><br>
+        Steps: (1) On the coin's Collider, check <strong>"Is Trigger"</strong>. (2) On the coin script, use <strong>OnTriggerEnter</strong>. (3) When the player tag is detected, add to score via GameManager.Instance, then call <strong>Destroy(gameObject)</strong> on the coin.<br><br>
+        Collision would have been wrong here because it would block the player's movement.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: Your FPS game needs a score system. Multiple scripts (gun, enemy, pickup) all need to update and read the score. How would you architect this?</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        Use the <strong>Singleton pattern</strong> with a GameManager class.<br><br>
+        A Singleton ensures only one GameManager exists in the scene. It has a <code style="font-size:0.8rem; font-family:'Space Mono',monospace; color:#8be9fd;">public static GameManager Instance</code> that any script can access without needing a reference.<br><br>
+        Any script just calls <code style="font-size:0.8rem; font-family:'Space Mono',monospace; color:#50fa7b;">GameManager.Instance.score += 10</code>. Without Singleton, each script would need a reference dragged in the Inspector, which is messy and breaks easily.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: The player's high score should still be visible when they reopen the game tomorrow. How do you implement this?</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        Use <strong>PlayerPrefs</strong>. Unlike variables which die when the game closes, PlayerPrefs saves data to the device persistently.<br><br>
+        Save: <code style="font-size:0.8rem; font-family:'Space Mono',monospace; color:#50fa7b;">PlayerPrefs.SetInt("HighScore", score);</code><br>
+        Load on Start: <code style="font-size:0.8rem; font-family:'Space Mono',monospace; color:#50fa7b;">int hs = PlayerPrefs.GetInt("HighScore", 0);</code><br><br>
+        The second argument in GetInt is the default value if the key doesn't exist yet (first time playing).
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: Bullets in your FPS game slow down the game after 30 seconds of play. What is the likely cause and fix?</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        <strong>Memory leak / too many active GameObjects.</strong> Bullets are being Instantiated but never Destroyed. After many shots, hundreds of bullets are flying off-screen, each using CPU and memory.<br><br>
+        Fix: <code style="font-size:0.8rem; font-family:'Space Mono',monospace; color:#50fa7b;">Destroy(bullet, 3f);</code> in the Shoot() method. This auto-destroys the bullet 3 seconds after spawning if it hasn't hit anything yet.<br><br>
+        Also: Destroy the bullet in OnCollisionEnter when it hits something.
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">SCENARIO: You want to move the player using Rigidbody. Should you put the movement code in Update() or FixedUpdate()? Explain why.</span>
+        <span class="qa-label short">SHORT</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER</span>
+        <strong>FixedUpdate()</strong> for Rigidbody movement. Physics in Unity runs on a fixed timestep (default 0.02s, 50 times/sec). If you modify rb.velocity or AddForce in Update() which runs at variable frame rates, the physics calculations become inconsistent and jittery.<br><br>
+        However, <strong>Input detection</strong> (GetKeyDown, GetButtonDown) should still be in Update() because FixedUpdate might skip frames and miss short button presses. Use a bool flag to pass the input from Update() to FixedUpdate().
+      </div>
+    </div>
+
+    <!-- LONG -->
+    <div style="margin: 28px 0 12px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:2px;">── LONG QUESTIONS (SCRIPT WRITING) ──</div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">Write a complete PlayerMovement script for an FPS game using Rigidbody. Include WASD movement and jumping. Explain each section.</span>
+        <span class="qa-label long">LONG</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER — see the Scripts tab for the complete script</span>
+        Key points to mention in your answer:
+        <ul class="styled" style="margin-top:8px;">
+          <li>GetComponent&lt;Rigidbody&gt;() in Start() — cache it once rather than calling it every frame</li>
+          <li>Input.GetAxis("Horizontal") and "Vertical" in FixedUpdate for smooth movement</li>
+          <li>Input.GetKeyDown for jump in Update() (to not miss presses) + bool flag for FixedUpdate</li>
+          <li>rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse) — Impulse applies force instantly</li>
+          <li>Preserve rb.velocity.y (don't zero it out or gravity won't work)</li>
+          <li>[SerializeField] private for speed and jumpForce — tweakable in Inspector but protected</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">Write a Gun script that fires bullets using Instantiate. Explain how Instantiate and Destroy are used and why each is needed.</span>
+        <span class="qa-label long">LONG</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER — see the Scripts tab for full script</span>
+        Key points to cover:
+        <ul class="styled" style="margin-top:8px;">
+          <li><strong>Instantiate(prefab, position, rotation)</strong> — creates a runtime copy of the bullet prefab at the firePoint. Without prefabs, you'd have to pre-place every bullet in the scene which is impossible</li>
+          <li><strong>GetComponent&lt;Rigidbody&gt;()</strong> on the spawned bullet — to apply velocity (propel it forward)</li>
+          <li><strong>rb.velocity = firePoint.forward * bulletSpeed</strong> — direction comes from the firepoint transform, which is aimed forward</li>
+          <li><strong>Destroy(bullet, 3f)</strong> — if bullet hits nothing, it gets cleaned up after 3 seconds. Without this, bullets accumulate and cause performance drops (memory leak)</li>
+          <li>Ammo check: if(currentAmmo > 0) prevents firing with no ammo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggleQA(this)">
+        <span class="qa-q-text">Write a GameManager script using the Singleton pattern. Explain why Awake() is used and what DontDestroyOnLoad does.</span>
+        <span class="qa-label long">LONG</span>
+        <span class="qa-toggle">▶</span>
+      </div>
+      <div class="qa-answer">
+        <span class="ans-label">// ANSWER — see Scripts tab for full script</span>
+        Key explanation points:
+        <ul class="styled" style="margin-top:8px;">
+          <li><strong>public static GameManager Instance</strong> — static means it belongs to the class itself, not any specific object. So GameManager.Instance works from anywhere without needing a reference</li>
+          <li><strong>Awake() not Start()</strong> — Awake runs before Start(), so the Instance is ready before any other script's Start() tries to access it. If you used Start() for Singleton setup, other Start() methods might run first and find Instance is null</li>
+          <li><strong>if(Instance == null)</strong> — first time: set Instance to this. Second time (duplicate): Destroy it. This guarantees exactly one GameManager</li>
+          <li><strong>DontDestroyOnLoad(gameObject)</strong> — when a new scene loads, Unity normally destroys all objects. This line tells Unity to keep the GameManager alive across scene changes</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.tab-btn');
+  btns.forEach(b => { if(b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active'); });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleQA(el) {
+  const answer = el.nextElementSibling;
+  const toggle = el.querySelector('.qa-toggle');
+  answer.classList.toggle('open');
+  toggle.textContent = answer.classList.contains('open') ? '▼' : '▶';
+}
+</script>
+</body>
+</html>
